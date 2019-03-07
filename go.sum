@@ -1,2 +1,4 @@
+github.com/gabriel-vasile/mimetype v0.1.0 h1:6eJkzI2f9ESd8FwA8B7X/H8vi5WUVdiMS74DoYILPvg=
+github.com/gabriel-vasile/mimetype v0.1.0/go.mod h1:kMJbg3SlWZCsj4R73F1WDzbT9AyGCOVmUtIxxwO5pmI=
 github.com/jbub/podcasts v0.0.0-20190228140625-dfd62906a405 h1:g/sD50RN5+DG6Q8zQTrvEPsII6VPiQ126HG7SIIGVF4=
 github.com/jbub/podcasts v0.0.0-20190228140625-dfd62906a405/go.mod h1:4fleal1ET5q0byaUr+4KtVMzYR4g1BzDyZvZa80RHsU=

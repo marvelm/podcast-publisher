@@ -4,11 +4,13 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"flag"
-	"github.com/jbub/podcasts"
 	"net/url"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/jbub/podcasts"
+	"github.com/gabriel-vasile/mimetype"
 )
 
 func hash(str string) string {
@@ -52,7 +54,9 @@ func main() {
 		if err != nil {
 			return err
 		}
-		files = append(files, path)
+		if !info.IsDir() {
+			files = append(files, path)
+		}
 		return nil
 	})
 	if err != nil {
@@ -64,8 +68,8 @@ func main() {
 	}
 
 	currentWorkingDirectory := filepath.Dir(os.Args[0])
-	for _, file := range files {
-		fileLocation, err := filepath.Rel(currentWorkingDirectory, file)
+	for _, filePath := range files {
+		fileLocation, err := filepath.Rel(currentWorkingDirectory, filePath)
 		if err != nil {
 			panic(err)
 		}
@@ -75,13 +79,19 @@ func main() {
 			panic(err)
 		}
 
-		filename := filepath.Base(file)
+		mime, _, err := mimetype.DetectFile(filePath)
+		if err != nil {
+			panic(err)
+		}
+
+		filename := filepath.Base(filePath)
 
 		podcast.AddItem(&podcasts.Item{
 			Title: filename,
-			GUID:  hash(file),
+			GUID:  hash(filePath),
 			Enclosure: &podcasts.Enclosure{
 				URL: downloadUrl.String(),
+				Type: mime,
 			},
 		})
 	}
