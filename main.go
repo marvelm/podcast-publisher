@@ -9,8 +9,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/jbub/podcasts"
 	"github.com/gabriel-vasile/mimetype"
+	"github.com/jbub/podcasts"
 )
 
 func hash(str string) string {
@@ -49,26 +49,21 @@ func main() {
 		panic(err)
 	}
 
-	var files []string
-	err = filepath.Walk(*folder, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			files = append(files, path)
-		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
-
 	podcast := &podcasts.Podcast{
 		Title: "My podcast",
 	}
 
 	currentWorkingDirectory := filepath.Dir(os.Args[0])
-	for _, filePath := range files {
+
+	_ = filepath.Walk(*folder, func(filePath string, info os.FileInfo, err error) error {
+		if err != nil {
+			panic(err)
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
 		fileLocation, err := filepath.Rel(currentWorkingDirectory, filePath)
 		if err != nil {
 			panic(err)
@@ -87,14 +82,16 @@ func main() {
 		filename := filepath.Base(filePath)
 
 		podcast.AddItem(&podcasts.Item{
-			Title: filename,
-			GUID:  hash(filePath),
+			Title:   filename,
+			PubDate: &podcasts.PubDate{info.ModTime()},
+			GUID:    hash(filePath),
 			Enclosure: &podcasts.Enclosure{
-				URL: downloadUrl.String(),
+				URL:  downloadUrl.String(),
 				Type: mime,
 			},
 		})
-	}
+		return nil
+	})
 
 	feed, err := podcast.Feed()
 	if err != nil {
