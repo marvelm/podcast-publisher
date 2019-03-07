@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/jbub/podcasts"
@@ -29,6 +30,15 @@ func addPathsToUrl(baseUrl *url.URL, paths ...string) (*url.URL, error) {
 	u.Path = finalPath
 
 	return u, nil
+}
+
+func removeFirstDirectoryIfNecessary(str string) string {
+	parts := strings.Split(str, "/")
+	if len(parts) <= 1 {
+		return str
+	}
+
+	return strings.Join(parts[1:], "/")
 }
 
 func main() {
@@ -79,10 +89,8 @@ func main() {
 			panic(err)
 		}
 
-		filename := filepath.Base(filePath)
-
 		podcast.AddItem(&podcasts.Item{
-			Title:   filename,
+			Title: strings.Replace(removeFirstDirectoryIfNecessary(fileLocation), "/", " ", -1),
 			PubDate: &podcasts.PubDate{info.ModTime()},
 			GUID:    hash(filePath),
 			Enclosure: &podcasts.Enclosure{
