@@ -44,6 +44,7 @@ func removeFirstDirectoryIfNecessary(str string) string {
 func main() {
 	folder := flag.String("folder", "", "Directory to check for files")
 	urlFlag := flag.String("url", "", "Base url like https://my-podcasts.com/somepodcast")
+	title := flag.String("title", "My podcast", "Title of the podcast")
 	flag.Parse()
 
 	if *folder == "" {
@@ -60,7 +61,7 @@ func main() {
 	}
 
 	podcast := &podcasts.Podcast{
-		Title: "My podcast",
+		Title: *title,
 	}
 
 	currentWorkingDirectory := filepath.Dir(os.Args[0])
