@@ -45,3 +45,4 @@ server {
 }
 ```
 
+Then, you can point your podcast app to `https://example.com/feed.xml`
